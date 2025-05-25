@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from src.books.routes import book_router
 from fastapi.middleware.cors import CORSMiddleware
 
+# Just Commenting Nothing to check the git commit
+
 version = 'v1'
 
 app = FastAPI(
