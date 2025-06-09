@@ -6,7 +6,8 @@ from .schemas import UserCreateModel, UserModel, UserLoginModel
 from .service import UserService
 from src.db.main import get_session
 from .utils import create_access_token, decode_token, verify_password
-from datetime import timedelta
+from datetime import datetime, timedelta
+from .dependencies import RefreshTokenBearer
 
 REFRESH_TOKEN_EXPIRY = 2
 
@@ -66,3 +67,20 @@ async def login_user(login_data:UserLoginModel, session:AsyncSession = Depends(g
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invlide Email or Password"
     )
+
+
+@auth_router.get('/refresh_token')
+async def get_new_access_token(token_details:dict = Depends(RefreshTokenBearer())):
+    expiry_timestamp = token_details['exp']
+
+    if datetime.fromtimestamp(expiry_timestamp) > datetime.now():
+        new_access_token = create_access_token(
+            user_data= token_details['user']
+        )
+
+    return JSONResponse(content={
+        "access_token" : new_access_token # type: ignore
+    })              
+
+raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invlid or Expired token")          
+                               
