@@ -1,9 +1,14 @@
 from fastapi.security import HTTPBearer
-from fastapi import Request, status
+from fastapi import Request, status, Depends
 from fastapi.security.http import HTTPAuthorizationCredentials
 from fastapi.exceptions import HTTPException
+from sqlmodel.ext.asyncio.session import AsyncSession
 from .utils import decode_token
 from src.db.redis import token_in_blocklist
+from src.db.main import get_session
+from .service import UserService
+
+user_service = UserService()
 
 class TokenBearer(HTTPBearer):
     
@@ -76,3 +81,13 @@ class RefreshTokenBearer(TokenBearer):
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Provide refresh token"
             )
+        
+
+async def current_user(
+        token_detils : dict = Depends(AccessTokenBearer()),
+        session : AsyncSession = Depends(get_session)
+):
+    user_email = token_detils['user']['email']
+    user = await user_service.get_user_by_email(user_email, session)
+
+    return user

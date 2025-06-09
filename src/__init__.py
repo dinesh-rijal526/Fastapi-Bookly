@@ -18,7 +18,6 @@ app = FastAPI(
     title= 'Bookly',
     description= 'A REST API Service for book review',
     version= version,
-    lifespan=life_span
 )
 app.add_middleware(CORSMiddleware, allow_origins=["*"],allow_methods=["*"], allow_headers=["*"])
 

@@ -7,7 +7,7 @@ from .service import UserService
 from src.db.main import get_session
 from .utils import create_access_token, decode_token, verify_password
 from datetime import datetime, timedelta
-from .dependencies import RefreshTokenBearer, AccessTokenBearer
+from .dependencies import RefreshTokenBearer, AccessTokenBearer, current_user
 from src.db.redis import add_jti_to_blocklist
 
 REFRESH_TOKEN_EXPIRY = 2
@@ -39,7 +39,8 @@ async def login_user(login_data:UserLoginModel, session:AsyncSession = Depends(g
             access_token = create_access_token(
                 user_data={
                     'email' : user.email,
-                    'user_uid' : str(user.uid)
+                    'user_uid' : str(user.uid),
+                    'user_role' : str(user.role)
                 }
             )
 
@@ -84,6 +85,12 @@ async def get_new_access_token(token_details:dict = Depends(RefreshTokenBearer()
         })              
 
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invlid or Expired token")     
+
+
+@auth_router.get('/me')
+async def get_current_user(user = Depends(current_user)):
+    return user
+
 
 
 @auth_router.get('/logout')
