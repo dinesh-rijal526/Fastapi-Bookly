@@ -10,6 +10,7 @@ class UserCreateModel(BaseModel):
     username : str = Field(max_length=12)
     email : str = Field(max_length=50)
     password : str = Field(min_length=6)
+    role : str
 
 class UserModel(BaseModel):
     uid : uuid.UUID
@@ -19,8 +20,11 @@ class UserModel(BaseModel):
     last_name : str
     is_verified : bool
     password_hash : str = Field(exclude=True)
+    role : str 
     created_at : datetime 
     update_at : datetime 
+
+class UserBooksModel(UserModel):
     books : List[Book]
 
 class UserLoginModel(BaseModel):
