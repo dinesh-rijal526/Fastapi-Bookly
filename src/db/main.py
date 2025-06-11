@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from typing import AsyncGenerator
-from src.books.models import Book
+from src.db.models import Book
 from src.config import Config
 
 

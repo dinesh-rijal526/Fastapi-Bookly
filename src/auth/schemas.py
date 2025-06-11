@@ -2,7 +2,8 @@ from pydantic import BaseModel, Field
 import uuid
 from datetime import datetime
 from typing import List
-from src.books.models import Book
+from src.db.models import Book
+from src.reviews.schemas import ReviewModel
 
 class UserCreateModel(BaseModel):
     first_name : str = Field(max_length=20)
@@ -26,6 +27,7 @@ class UserModel(BaseModel):
 
 class UserBooksModel(UserModel):
     books : List[Book]
+    reviews : List[ReviewModel]
 
 class UserLoginModel(BaseModel):
     email : str = Field(max_length=50)

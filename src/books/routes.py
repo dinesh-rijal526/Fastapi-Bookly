@@ -4,7 +4,7 @@ from typing import List
 import uuid
 from .service import BookService
 from src.auth.dependencies import AccessTokenBearer
-from src.books.schemas import Books, BookUpdateModel, BookCreateMOdel
+from .schemas import Books, BookUpdateModel, BookCreateMOdel, BookDetailModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 from src.db.main import get_session
 from src.auth.dependencies import RoleChecker
@@ -42,7 +42,7 @@ async def create_a_book(book_data:BookCreateMOdel,
     new_book =await book_service.create_book(book_data, user_id, session)
     return new_book
 
-@book_router.get('/{book_uid}', response_model=Books)
+@book_router.get('/{book_uid}', response_model=BookDetailModel)
 async def get_book(book_uid:str, session:AsyncSession = Depends(get_session), token_details : dict = Depends(access_token_bearer), _ : bool = Depends(role_checker)) :
     book =await book_service.get_book(book_uid, session)
     if book is  None:
